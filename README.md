@@ -21,6 +21,8 @@ The **Rental Management System** is a web application built using Django, design
 - **SQLite/PostgreSQL/MySQL**: Database options (depending on configuration).
 - **Bootstrap**: Frontend framework for responsive design.
 - **Git**: Version control system for managing code.
+- **Javascript**
+--**CSS** : Styling
 
 ## Installation
 
@@ -59,13 +61,13 @@ python manage.py runserver
 
 Visit http://127.0.0.1:8000/ in your web browser to access the application.
 
- **Usage**
+ ## Usage
 Access the Admin Panel: Log in to the Django admin panel at http://127.0.0.1:8000/admin/ using the superuser credentials created during setup.
 Manage Properties and Tenants: Use the admin panel to add, update, and manage rental properties and tenant information.
 Submit Maintenance Requests: Tenants can submit maintenance requests through the application interface.
 Track Payments: View and manage payment records for rental transactions.
 
-**Contributing***
+## Contributing 
 We welcome contributions to the Rental Management System. If you’d like to contribute, please follow these steps:
 
 Fork the Repository: Click the "Fork" button on the GitHub repository page.
@@ -89,10 +91,10 @@ Push Changes:
 git push origin feature/your-feature-name
 Open a Pull Request: Go to the original repository on GitHub and open a pull request to merge your changes.
 
-**License**
+## License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-Contact
+## Contact
 For any questions or support, please contact:
 0112284093
 

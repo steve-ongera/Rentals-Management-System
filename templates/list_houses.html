@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}House List{% endblock %}
+
+{% block content %}
+<link href="{% static 'assets/css/style2.css'%}" rel="stylesheet">
+
+<br>
+<br>
+<br>
+<main id="main" class="main">
+    <section class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">House List</h5>
+                            <div class="table-responsive">
+                                <!-- Table with stripped rows -->
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">House Name</th>
+                                        <th scope="col">House No</th>
+                                        <th scope="col">Vacancy Status</th>
+                                        <th scope="col"> Status</th>
+                                      <th scope="col"> Relocation </th>
+                                        <th scope+"col"> Action </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for house in houses %}
+                                        <tr>
+                                            <td>{{ house.name }}</td>
+                                            <td>{{ house.house_number }}</td>
+                                            <td>
+                                                {% if house.is_vacant %}
+                                                    <span class="badge bg-success">Vacant</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">Occupied</span>
+                                                {% endif %}
+                                            </td>
+
+
+                                            <td>
+                                                {% if house.is_booked %}
+                                                    <span class="badge rounded-pill bg-info text-dark">Booked</span>
+                                                {% else %}
+                                                <span class="badge rounded-pill bg-secondary">N/A</span>
+                                                {% endif %}
+                                            </td>
+
+                                           
+                                          
+                                             <td>
+                                                {% if house.has_leave_notice %}
+                                                    <span class="badge bg-warning text-dark">
+                                                        Under Leave Notice {{ house.leave_date|date:"Y-m-d" }}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">N/A</span>
+                                                {% endif %}
+                                            </td>
+
+                                            <td>
+                                                <a href="{% url 'house_detail' house.id %}" class="btn rounded-pill btn-primary">View Details</a>
+                                                {% if house.is_vacant %}
+                                                    <a href="{% url 'book_house' house.id %}" class="btn btn-success">Book Now</a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="3">No houses available.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- End Table with stripped rows -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock %}

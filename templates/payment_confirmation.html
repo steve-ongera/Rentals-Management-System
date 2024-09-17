@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Confirmation{% endblock %}
+
+{% block content %}
+<link href="{% static 'assets/css/style2.css' %}" rel="stylesheet">
+
+<style>
+    .confirmation-container {
+        padding: 30px;
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .confirmation-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #343a40;
+    }
+    .confirmation-details {
+        margin-bottom: 30px;
+    }
+    .confirmation-details p {
+        font-size: 18px;
+        color: #495057;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .confirmation-details h3 {
+        font-size: 22px;
+        color: #212529;
+        margin-bottom: 15px;
+    }
+    .confirmation-details ul {
+        list-style-type: none;
+        padding: 0;
+        font-size: 16px;
+        color: #495057;
+    }
+    .confirmation-details ul li {
+        padding: 8px 0;
+    }
+    .confirmation-actions {
+        text-align: center;
+    }
+    .confirmation-actions .btn {
+        font-size: 16px;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+    
+    .messages {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    .messages li {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .messages .success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    .messages .success .close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #155724;
+    }
+</style>
+<br>
+<br>
+<br>
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <!-- Page Content -->
+    <div class="content container-fluid">
+        <!-- Payment Confirmation -->
+        <div class="confirmation-container">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}">
+                            {{ message }}
+                            <button class="close" onclick="this.parentElement.style.display='none';">&times;</button>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            
+            <h2>Payment Confirmation</h2>
+            
+            <div class="confirmation-details">
+                <p>Thank you, {{ tenant.first_name }} {{ tenant.last_name }}, for your payment!</p>
+                
+                <h3>Payment Details:</h3>
+                <ul>
+                    <li><strong>Month:</strong> {{ month.name }}</li>
+                    <li><strong>Amount Paid:</strong> KSH {{ payment.amount }}</li>
+                    <li><strong>Payment Date:</strong> {{ payment.date_paid }}</li>
+                    <li><strong>M-Pesa Code:</strong> {{ payment.mpesa_code }}</li>
+                </ul>
+            </div>
+            
+            <div class="confirmation-actions">
+                <a href="{% url 'tenant_payment' %}" class="btn btn-primary">Make Another Payment</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Wrapper -->
+
+{% endblock %}

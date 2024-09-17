@@ -1,0 +1,111 @@
+<!-- search_tenant.html -->
+{% extends 'base.html' %}
+{% block title %}Search Tenant{% endblock %}
+
+{% block content %}
+<style>
+    .tenant-info, .payment-info {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+    .payment-info {
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 0.9em;
+        border-radius: 10px;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 10px;
+    }
+    .payment-info p {
+        margin: 0;
+    }
+    .month {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+        justify-self: start;
+    }
+    .amount {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+        justify-self: end;
+    }
+    .date {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+        justify-self: start;
+    }
+    .mpesa-code {
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+        justify-self: end;
+    }
+    .highlighted {
+        background-color: #f0f8ff;
+        border: 2px solid #0000ff;
+    }
+    .payment-info:hover {
+        transform: scale(1.02);
+        background-color: #f9f9f9;
+    }
+</style>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<div class="container">
+    <h2>Search Tenant</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_identification_number">Enter Identification Number:</label>
+        <input type="text" id="id_identification_number" name="identification_number" required>
+        <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+    <hr>
+    {% if search_performed %}
+    {% if tenant %}
+        <h3>Tenant Information:</h3>
+        <ul>
+            <li><strong>Identification Number:</strong> {{ tenant.identification_number }}</li>
+            <li><strong>Name:</strong> {{ tenant.first_name }} {{ tenant.last_name }}</li>
+            <li><strong>Email:</strong> {{ tenant.email }}</li>
+            <li><strong>Phone:</strong> {{ tenant.phone }}</li>
+            <li><strong>Address:</strong> {{ tenant.address }}</li>
+            <li><strong>House No:</strong> {{ tenant.tap_no }}</li>
+            <br>
+            
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="identification_number" value="{{ tenant.identification_number }}">
+                <input type="hidden" name="download" value="true">
+                <button class="btn btn-primary" type="submit">Download Receipt</button>
+            </form>
+        </ul>
+
+        {% if payments %}
+                <h2>Payments</h2>
+                {% for payment in payments %}
+                    <div class="payment-info {% if payment.mpesa_code == request.POST.mpesa_code %}highlighted{% endif %}">
+                        <p class="month"><strong>Month:</strong> {{ payment.month.name }}</p>
+                        <p class="amount"><strong>Amount:</strong> ksh{{ payment.amount }}</p>
+                        <p class="date"><strong>Date :</strong> {{ payment.date_paid|date:"M j Y" }}</p>
+                        <p class="mpesa-code"><strong>Code:</strong> {{ payment.mpesa_code }}</p>
+                    </div>
+                {% endfor %}
+
+                
+            {% else %}
+                <p>No payments found for this tenant.</p>
+            {% endif %}
+    {% elif tenant is None %}
+        <p>No tenant found with that identification number.</p>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

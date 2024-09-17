@@ -1,0 +1,159 @@
+{% load static %}
+<style>
+  /* Ensure both spans are inline and stacked on top of each other */
+.logo a {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+}
+
+/* Hide the large text by default */
+.logo-large {
+    display: none;
+}
+
+/* Show the small text by default */
+.logo-small {
+    display: inline;
+}
+
+/* Media query for larger screens */
+@media (min-width: 768px) { /* You can adjust the breakpoint as needed */
+    .logo-small {
+        display: none;
+    }
+    .logo-large {
+        display: inline;
+    }
+}
+
+</style>
+<!-- ======= Top Bar ======= -->
+<div id="topbar" class="d-flex align-items-center fixed-top">
+    <div class="container d-flex justify-content-between">
+      <div class="contact-info d-flex align-items-center">
+        <i class="bi bi-envelope"></i> <a href="mailto:gadafimran411@gmail.com">ngekarentals@gmail.com</a>
+        <i class="bi bi-phone"></i> 65698
+      </div>
+      <div class="d-none d-lg-flex social-links align-items-center">
+        <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+        <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></i></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top">
+    <div class="container d-flex align-items-center">
+
+      <h1 class="logo me-auto">
+        <a href="{% url 'home' %}">
+            <span class="logo-large">Mentor Sacco</span>
+            <span class="logo-small">Mentor</span>
+        </a>
+    </h1>
+      <!-- Uncomment below if you prefer to use an image logo -->
+      <a href="{% url 'home'%}" class="logo me-auto"><img src="{% static 'assets/img/logo.png'%}" alt="xx" class="img-fluid"></a>
+      <nav id="navbar" class="navbar order-last order-lg-0">
+        <ul>
+          {% if request.user.is_authenticated %}
+          {% with profile=request.user.profile %}
+          {% if profile.user_type == 'guest' %}
+            <li><a class="nav-link scrollto" href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li><a class="nav-link scrollto" href="{% url 'maintenance_request_list' %}">Reports</a></li>
+            <li><a class="nav-link scrollto" href="{% url 'tenant_payment'%}"> Make Payments </a> </li>
+           
+            {% elif profile.user_type == 'admin' %}
+          
+            <li><a class="nav-link scrollto" href="{% url 'admin_dashboard' %}">Admin Panel</a></li>  
+            <li> <a class="nav-link scrollto" href="{% url 'payment_status'%}"> Record </a> </li>
+            <li> <a class="nav-link scrollto" href="{% url 'search_tenant'%}"> Search  </a> </li>
+            <li> <a class="nav-link scrollto" href="{% url 'search_payment'%}"> Code  </a> </li>
+
+            {% elif profile.user_type == 'developer' %}
+           
+            <li><a class="nav-link scrollto" href="{% url 'admin_dashboard' %}">Admin Panel</a></li>  
+            <li> <a class="nav-link scrollto" href="{% url 'payment_status'%}"> Record </a> </li>
+            <li> <a class="nav-link scrollto" href="{% url 'search_tenant'%}"> Search  </a> </li>
+      
+
+            {% endif %}
+            {% endwith %}
+            {% endif %}
+
+
+
+
+
+           
+            {% if request.user.is_authenticated %}
+            {% with profile=request.user.profile %}
+            {% if profile.user_type == 'admin' %}
+            <li class="dropdown"><a href="#"><span>Admin</span> <i class="bi bi-chevron-down"></i></a>
+              <ul>
+      
+                <li><a href="{% url 'add_payment'%}" >Add Record</a></li>
+                <li><a href="{% url 'maintenance_request_list'%}">Maintenance List </a></li>
+                <li><a href="{% url 'tenant_list'%}">Tenants (profile)</a></li>
+                <li><a href="{% url 'user_list'%}">Tenants  (Database)</a></li>
+                <li><a href="{% url 'list_houses'%}">Detailed House </a></li>
+                <li><a href="{% url 'booked_houses_list'%}"> Booked Houses </a></li>
+                {% comment%}
+                <li><a href="{% url 'house_list'%}">House </a></li>
+                {% endcomment %}
+                <li> <a href="{% url 'list_leave_notices'%}"> Leave Notices </a> </li>
+              </ul>
+            </li>
+
+            {% elif profile.user_type == 'developer' %}
+            <li class="dropdown"><a href="#"><span>Admin</span> <i class="bi bi-chevron-down"></i></a>
+              <ul>
+      
+                <li><a href="{% url 'add_payment'%}" >Add Record</a></li>
+                <li><a href="{% url 'maintenance_request_list'%}">Maintenance List </a></li>
+                <li><a href="{% url 'tenant_list'%}">Tenants (profile)</a></li>
+                <li><a href="{% url 'user_list'%}">Tenants  (Database)</a></li>
+                <li><a href="{% url 'house_list'%}">House </a></li>
+              </ul>
+            </li>
+            {% elif profile.user_type == 'guest' %}
+            <li class="dropdown"><a href="#"><span>Tenant</span> <i class="bi bi-chevron-down"></i></a>
+              <ul>
+      
+                <li><a href="#" >relocation request</a></li>
+                <li><a href="{% url 'apply_leave_notice'%}">apply leave</a></li>
+                <li><a href="{% url 'tenant_leave_notices'%}">leave notices</a></li>
+              </ul>  
+             
+              
+            </li>
+            {% endif %}
+            {% endwith %}
+            {% endif %}
+
+            {% if user.is_authenticated %}
+          <li><a class="nav-link scrollto" href="#">{{ user.username }} ({{ user.profile.user_type }})</a></li>
+        
+                {% else %}
+                   
+                    <li><a  class="getstarted scrollto" href="{% url 'login' %}">Login</a></li>
+            {% endif %}
+  
+          </ul>
+        
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+      {% if user.is_authenticated %}
+      <a href="{% url 'logout'%}" class="appointment-btn scrollto"><span class="d-none d-md-inline"></span>Logout</a>
+      {% else %}
+      <a href="{% url 'register'%}" class="appointment-btn scrollto"><span class="d-none d-md-inline"></span>Register</a>
+
+
+      {% endif %}
+
+    </div>
+  </header><!-- End Header -->

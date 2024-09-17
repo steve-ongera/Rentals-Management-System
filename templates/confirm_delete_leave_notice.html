@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}   {% endblock %}
+
+{% block content %}
+<link href="{% static 'assets/css/style2.css'%}" rel="stylesheet">
+
+
+</head>
+<br>
+<br>
+<br>
+<main id="main" class="main">
+<section class="section">
+    <div class="container">
+        <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                           
+                        <h5 class="card-title">Are you sure you want to delete this leave notice?</h5>
+                        
+                        <p>Leave Notice: {{ leave_notice.reason }}</p>
+                        <form method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-primary" type="submit">Confirm Delete</button>
+                            <a href="{% url 'tenant_leave_notices' %}">Cancel</a>
+                        </form>
+                    </div>
+                    <!-- End Table with stripped rows -->
+
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+</section>
+</main>
+
+
+{% endblock %}

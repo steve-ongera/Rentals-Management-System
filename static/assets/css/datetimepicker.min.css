@@ -1,0 +1,12 @@
+/* Example styles for a custom date picker */
+.datepicker {
+    position: relative;
+}
+
+.datepicker-calendar {
+    display: none;
+    position: absolute;
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 10px;
+}

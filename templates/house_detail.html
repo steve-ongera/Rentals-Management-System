@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}House Detail{% endblock %}
+
+{% block content %}
+<link href="{% static 'assets/css/style2.css'%}" rel="stylesheet">
+<style>
+
+    /* Ensure all images have a smaller size and square aspect ratio */
+    .house-images img {
+        border-radius: 25px;
+        width: 150px; /* Set a fixed width for smaller images */
+        height: 150px; /* Set a fixed height to make images square */
+        object-fit: cover; /* Ensure images cover the area without distortion */
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effect */
+    }
+
+    /* Add hover effect */
+    .house-images img:hover {
+        transform: scale(1.1); /* Slightly enlarge image on hover */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for better visual effect */
+    }
+
+    /* Container for images */
+    .house-images {
+        display: flex;
+        gap: 10px; /* Space between images */
+        flex-wrap: wrap; /* Wrap images to next line if there's not enough space */
+        margin-bottom: 20px; /* Space below image container */
+    }
+
+</style>
+
+<br>
+<br>
+<br>
+<main id="main" class="main">
+    <section class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"> <b>{{ house.name }} </b></h5>
+                            <p> Room Number  <b> {{ house.house_number}}</b> </p>
+                            <p><strong>Description:</strong> {{ house.description }}</p>
+                            <p><strong>Rent Fee:</strong> ksh {{ house.rent_fee }}</p>
+                            <p><strong>Vacancy Status:</strong>
+                                {% if house.is_vacant %}
+                                    <span class="badge bg-success">Vacant</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Occupied</span>
+                                {% endif %}
+                            </p>
+
+                            <p><strong>Paid on Deposit :</strong>
+                                {% if house.is_booked %}
+                                    <span class="badge rounded-pill bg-info text-dark">Booked</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Still Vacant</span>
+                                {% endif %}
+                            </p>
+
+                            <div class="house-images">
+                                <h6>Images:</h6>
+                                {% if house.image1 %}
+                                    <img src="{{ house.image1.url }}" alt="Image 1" style="width: 300px; height: auto;">
+                                {% endif %}
+                                {% if house.image2 %}
+                                    <img src="{{ house.image2.url }}" alt="Image 2" style="width: 300px; height: auto;">
+                                {% endif %}
+                                {% if house.image3 %}
+                                    <img src="{{ house.image3.url }}" alt="Image 3" style="width: 300px; height: auto;">
+                                {% endif %}
+                            </div>
+                            <br>
+                            <a href="{% url 'list_houses' %}" class="btn btn-secondary">Back to List</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock %}

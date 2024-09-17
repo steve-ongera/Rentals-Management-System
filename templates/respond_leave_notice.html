@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Respond to Leave Notice</title>
+</head>
+<body>
+    <h1>Respond to Leave Notice</h1>
+    <h2>Notice Details</h2>
+    <p><strong>Tenant:</strong> {{ leave_notice.tenant }}</p>
+    <p><strong>Planned Leave Date:</strong> {{ leave_notice.planned_leave_date }}</p>
+    <p><strong>Reason:</strong> {{ leave_notice.reason }}</p>
+    
+    <h2>Admin Response</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit Response</button>
+    </form>
+    <a href="{% url 'list_leave_notices' %}">Back to list</a>
+</body>
+</html>

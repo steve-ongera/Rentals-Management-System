@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="{% static 'assets/css/style2.css' %}" rel="stylesheet">
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="container">
+    <h1 class="text-center mb-4">Non-Staff Member Details</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>{{ non_staff_member.first_name }} {{ non_staff_member.last_name }}</h3>
+            <p><strong>ID Number:</strong> {{ non_staff_member.id_number }}</p>
+            <p><strong>Email:</strong> {{ non_staff_member.email }}</p>
+            <p><strong>Phone:</strong> {{ non_staff_member.phone }}</p>
+            <p><strong>Address:</strong> {{ non_staff_member.address }}</p>
+            <p><strong>Role:</strong> {{ non_staff_member.role }}</p>
+        </div>
+    </div>
+    <a href="{% url 'non_staff_list' %}" class="btn btn-secondary mt-3">Back to Non-Staff List</a>
+</div>
+<br>
+<br>
+<br>
+{% endblock %}

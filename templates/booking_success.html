@@ -1,0 +1,29 @@
+<!-- booking_success.html -->
+
+{% extends 'base.html' %}
+{% block title %}Booking Success{% endblock %}
+
+{% block content %}
+<br>
+<br>
+<br>
+<br>
+<br>
+<main id="main" class="main">
+    <section class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Booking Successful</h5>
+                            <p>Your booking has been successfully completed. Thank you for choosing our service!</p>
+                            <a href="{% url 'list_houses' %}" class="btn btn-primary">Return to House List</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

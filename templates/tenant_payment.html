@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Make Payment{% endblock %}
+
+{% block content %}
+<link href="{% static 'assets/css/style2.css' %}" rel="stylesheet">
+
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        font-weight: bold;
+    }
+    .form-group input, 
+    .form-group select {
+        border-radius: 5px;
+        padding: 10px;
+        width: 270px;
+        font-size: 16px;
+        border: 1px solid #ced4da;
+    }
+    .form-group textarea {
+        background: transparent;
+        border: 1px solid gray;
+        padding: 1rem;
+        border-radius: 15px;
+        width: 100%;
+        height: 100px;
+        color: black;
+        font-weight: 500;
+        outline: none;
+    }
+    .messages {
+        list-style-type: none;
+        padding: 0;
+    }
+    .messages li {
+        margin-bottom: 10px;
+    }
+    .messages .success {
+        color: green;
+    }
+    .messages .error {
+        color: red;
+    }
+</style>
+<br>
+<br>
+<br>
+
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <!-- Page Content -->
+    <div class="content container-fluid">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Make Payment</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                        <li class="breadcrumb-item active">Make Payment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+        
+        <!-- Payment Form -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="col-auto float-right ml-auto">
+                            <a href="{% url 'home' %}" class="btn add-btn"><i class="fa fa-arrow-left"></i> Back</a>
+                        </div>
+                        <h4 class="card-title mb-0">Add Payment Transactions Securely</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if messages %}
+                            <ul class="messages">
+                                {% for message in messages %}
+                                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <div class="form-group row">
+                                        <label for="month" class="col-lg-3 col-form-label">Month</label>
+                                        <div class="col-lg-9">
+                                            {{ form.month }}
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="form-group row">
+                                        <label for="amount" class="col-lg-3 col-form-label">Amount</label>
+                                        <div class="col-lg-9">
+                                            {{ form.amount }}
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="form-group row">
+                                        <label for="date_paid" class="col-lg-3 col-form-label">Date Paid</label>
+                                        <div class="col-lg-9">
+                                            {{ form.date_paid }}
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="form-group row">
+                                        <label for="mpesa_code" class="col-lg-3 col-form-label">Mpesa Code</label>
+                                        <div class="col-lg-9">
+                                            {{ form.mpesa_code }}
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="text-right">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6">
+                                    <!-- Optionally add additional content here -->
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Payment Form -->
+    </div>
+</div>
+<!-- /Page Wrapper -->
+
+{% endblock %}

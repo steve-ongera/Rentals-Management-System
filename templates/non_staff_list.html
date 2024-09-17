@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="{% static 'assets/css/style2.css' %}" rel="stylesheet">
+<br>
+<br>
+<br>
+<div class="container">
+    <h1 class="text-center mb-4">Non-Staff Members</h1>
+    <a href="{% url 'add_non_staff' %}" class="btn btn-primary mb-3">Add New Non-Staff Member</a>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID Number</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in non_staff_members %}
+                    <tr>
+                        <td>{{ member.id_number }}</td>
+                        <td>{{ member.first_name }} {{ member.last_name }}</td>
+                        <td>{{ member.email }}</td>
+                        <td>{{ member.phone }}</td>
+                        <td>{{ member.role }}</td>
+                        <td><a href="{% url 'non_staff_detail' member.pk %}" class="btn btn-info">View Details</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

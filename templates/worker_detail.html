@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Worker Details{% endblock %}
+{% block content %}
+    <link href="{% static 'assets/css/style2.css' %}" rel="stylesheet">
+
+    <style>
+        .worker-detail {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .worker-detail h3 {
+            margin-bottom: 15px;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .worker-detail p {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+        
+        .worker-detail img {
+            max-width: 200px; /* Set max-width for images */
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: block; /* Ensure images are block-level */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .worker-detail .photo-label, 
+        .worker-detail .passport-photo-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            text-decoration: none;
+        }
+    </style>
+<br>
+<br>
+<br>
+    <h1 class="text-center mb-4">Worker Details</h1>
+    
+    <div class="container">
+        <div class="row">
+
+            <div class="card mb-0">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="profile-view">
+                                <div class="profile-img-wrap">
+                                    <div class="profile-img">
+                                        <a href="#"> <img src="{{ worker.photo.url }}" alt="{{ worker.first_name }} {{ worker.last_name }} Photo"></a>
+                                    </div>
+                                </div>
+                                <div class="profile-basic">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="profile-info-left">
+                                                <h3 class="user-name m-t-0 mb-0">{{ worker.first_name }} {{ worker.last_name }}</h3>
+                                                <h6 class="text-muted"> </h6>
+                                                <small class="text-muted"> {{ worker.role }}</small>
+                                                <div class="staff-id">Employee ID : {{ worker.id_number }}</div>
+                                                <div class="small doj text-muted">Date of Join : 1st Jan 2013</div>
+                                                <div class="staff-msg"><a class="btn btn-custom" href="{% url 'worker_list' %}">Back</a></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <ul class="personal-info">
+                                                <li>
+                                                    <div class="title">Phone:</div>
+                                                    <div class="text"><a href="#">{{ worker.phone}}</a></div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Email:</div>
+                                                    <div class="text"><a href="#">{{ worker.email }}</a></div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Birthday:</div>
+                                                    <div class="text">{{ worker.dob}}</div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Address:</div>
+                                                    <div class="text">{{ worker.address }}</div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Gender:</div>
+                                                    <div class="text">{{ worker.gender}}</div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Reports to:</div>
+                                                    <div class="text">
+                                                       <div class="avatar-box">
+                                                          <div class="avatar avatar-xs">
+                                                             <img src="assets/img/profiles/avatar-16.jpg" alt="">
+                                                          </div>
+                                                       </div>
+                                                       <a href="#">
+                                                            Jeffery Lalor
+                                                        </a>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pro-edit"><a data-target="#profile_info" data-toggle="modal" class="edit-icon" href="{% url 'update_worker' worker.id %}"><i class="fa fa-pencil"></i></a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <div class="col-md-6 worker-detail">
+                
+               
+                
+                <p class="passport-photo-label">Passport Photo:</p>
+                <img src="{{ worker.passport_photo.url }}" alt="{{ worker.first_name }} {{ worker.last_name }} Passport Photo">
+            </div>
+        </div>
+        
+      
+    </div>
+    <br>
+    <br>
+{% endblock %}

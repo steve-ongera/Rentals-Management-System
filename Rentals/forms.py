@@ -116,15 +116,31 @@ class TenantPaymentForm(forms.ModelForm):
             'date_paid': forms.DateInput(attrs={'type': 'date'}),
         }
 
+
+
+
 class UserPaymentForm(forms.ModelForm):
     class Meta:
         model = Payment
-        fields = ['month', 'amount', 'mpesa_code', 'date_paid']
-    
-    month = forms.ModelChoiceField(queryset=Month.objects.all(), empty_label="Select Month")
-    amount = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={'placeholder': 'Amount'}))
-    mpesa_code = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Mpesa Code'}))
-    date_paid = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+        fields = ['year', 'month', 'amount', 'mpesa_code', 'date_paid']
+        widgets = {
+            'date_paid': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     # Initialize month field with empty queryset
+    #     self.fields['month'].queryset = Month.objects.none()
+        
+    #     # Get form data if it exists
+    #     if 'data' in kwargs:
+    #         try:
+    #             year_id = kwargs['data'].get('year')
+    #             if year_id:
+    #                 year = Payment_Year.objects.get(id=year_id)
+    #                 self.fields['month'].queryset = year.month.all()
+    #         except (ValueError, Payment_Year.DoesNotExist):
+    #             pass
 
 
 

@@ -21,8 +21,13 @@ urlpatterns = [
     path('maintenance/requests/', views.maintenance_request_list, name='maintenance_request_list'),
     path('maintenance/request/<int:request_id>/respond/', views.respond_to_request, name='respond_to_request'),
     path('add_tenant', views.add_tenant , name='add_tenant'),
+    #Add user data to database 
     path('add_tenant_databse', views.add_tenant_databse , name='add_tenant_databse'),
     path('user_list', views.user_list , name='user_list'),
+    path('tenant_details/<int:tenant_id>/', views.tenant_database_details , name='tenant_details'),
+    path('update/<int:tenant_id>/', views.update_tenant_database, name='update_tenant'),
+    path('delete/<int:tenant_id>/', views.delete_tenant_database, name='delete_tenant'),
+
     path('add_house', views.add_house , name='add_house'),
     path('house_list', views.house_list , name='house_list'),
     path('search-tenant/', views.search_tenant, name='search_tenant'),

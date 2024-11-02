@@ -1,9 +1,72 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Home - Online Water Payment{% endblock %}
+{% load your_template_tags %}
+{% block title %}Ngeka Rentals{% endblock %}
 
 {% block content %}
 <link href="{% static 'assets/css/style2.css'%}" rel="stylesheet">
+<style>
+    .nav-tabs-solid {
+        background: #f3f3f3;
+        border: 0;
+        border-radius: 4px;
+    }
+    
+    .nav-tabs-solid .nav-item {
+        margin-bottom: 0;
+        
+    }
+    
+    .nav-tabs-solid .nav-link {
+        border: 0;
+        padding: 10px 20px;
+        color: #666;
+    }
+    
+    .nav-tabs-solid .nav-link.active {
+        background: #00c5fb;
+        color: #fff;
+        border-radius:12px;
+    }
+    
+    .card {
+        margin-bottom: 20px;
+        border: 1px solid #ededed;
+        border-radius: 4px;
+    }
+    
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .year-stats {
+        background: #f9f9f9;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+    }
+
+    .debug-info {
+        background: #fff8dc;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        border: 1px solid #ffe4b5;
+    }
+
+    .payment-status {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .payment-status.paid {
+        color: #28a745;
+    }
+
+    .payment-status.unpaid {
+        color: #dc3545;
+    }
+</style>  
 <br>
 <br>
 <br>
@@ -13,78 +76,122 @@
 <main id="main" class="main">
     <section class="section">
         <div class="container">
-        
-
-                <div class="row">
-                    {% if messages %}
-                        {% for message in messages %}
-                             <div class="alert alert-{{ message.tags }} warning alert-dismissible fade show" role="alert">
-                                 <strong>{{ message }}   </strong> 
-                                 
-                                 </div>
-                             {% endfor %}
-                         {% endif %}
-                    <div class="col-md-12">
-                        <div class="col-auto float-right ml-auto">
-                            <a href="{% url 'add_payment'%}" class="btn add-btn" data-toggle="modal"  ><i class="fa fa-plus"></i> Add Record </a>
-                          
+            <div class="row">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} warning alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
                         </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <div class="col-md-12">
+                    <div class="col-auto float-right ml-auto">
+                        <a href="{% url 'add_payment'%}" class="btn add-btn" >
+                            <i class="fa fa-plus"></i> Add Record
+                        </a>
+                    </div>
+                    <br>
+                    <br>
 
-                        
-
-                        <br>
-                        <br>
-                        <div class="table-responsive">
-                            <table class="table table-striped custom-table mb-0 datatable">
-                                <thead>
-                                    <tr>
-                                        <th>Tenant</th>
-                                        {% for month in months %}
-                                        <th>{{ month.name }}</th>
-
-                                        {% endfor %}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for tenant, months_data in payment_data.items %}
-                                    <tr>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="#" class="avatar"><img alt="" src="{% static 'assets/img/profile.png'%}"></a>
-                                                <a href="#"><b>{{ tenant.first_name }} {{ tenant.last_name }}<b> <span><b>{{ tenant.tap_no}}</b></span></a>
-                                            </h2>
-                                        </td>
-                                     
-                                            {% for month, paid in months_data.items %}
-                                                                <td>
-                                                                    {% if paid %}
-                                                                        <span style="color: green; , font-weight: bold; font-size: 28px;">✓</span> 
-                                                                    {% else %}
-                                                                        <span style="color: red; , font-weight: bold;">✗</span>
-                                                                    {% endif %}
-                                                                </td>
-                                            {% endfor %}
-                                      
-                                        
-                                    </tr>
-                                    {% endfor %}
-                                    
-                                </tbody>
-                            </table>
+                    <!-- Year Statistics -->
+                     {% comment %}
+                    <div class="year-stats">
+                        <h4>Payment Statistics for {{ selected_year.name }}</h4>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>Total Expected: {{ year_totals|get_item:selected_year|get_item:'total_expected' }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p>Total Paid: {{ year_totals|get_item:selected_year|get_item:'total_paid' }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p>Payment Rate: {{ year_totals|get_item:selected_year|get_item:'payment_percentage'|floatformat:1 }}%</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p>Total Tenants: {{ year_totals|get_item:selected_year|get_item:'total_tenants' }}</p>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Debug Information -->
+                    {% if debug_info %}
+                    <div class="debug-info">
+                        <h4>Debug Information</h4>
+                        <p><strong>Years in Database:</strong> {{ debug_info.years_found|join:", " }}</p>
+                        <p><strong>Payment Counts per Year:</strong></p>
+                        <ul>
+                            {% for year, count in debug_info.payment_counts.items %}
+                                <li>{{ year }}: {{ count }} payments</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                     {% endcomment %}
+
+                    <!-- Year Tabs -->
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs nav-tabs-solid nav-justified">
+                                {% for year in payment_years %}
+                                <li class="nav-item">
+                                    <a class="nav-link {% if year == selected_year %}active{% endif %}" 
+                                       href="?year={{ year.id }}">
+                                        {{ year.name }}
+                                         {% comment %}
+                                        <span class="badge bg-{% if year == selected_year %}light{% else %}secondary{% endif %}">
+                                            {{ year_totals|get_item:year|get_item:'payment_percentage'|floatformat:0 }}%
+                                        </span>
+                                         {% endcomment %}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped custom-table mb-0 datatable">
+                            <thead>
+                                <tr>
+                                    <th>Tenant</th>
+                                    {% for month in months %}
+                                    <th>{{ month.name }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tenant in tenants %}
+                                <tr>
+                                    <td>
+                                        <h2 class="table-avatar">
+                                            <a href="#" class="avatar">
+                                                <img alt="" src="{% static 'assets/img/profile.png'%}">
+                                            </a>
+                                            <a href="#">
+                                                <b>{{ tenant.first_name }} {{ tenant.last_name }}</b>
+                                                <span><b>{{ tenant.tap_no }}</b></span>
+                                            </a>
+                                        </h2>
+                                    </td>
+                                    {% for month in months %}
+                                        <td>
+                                            {% if payment_data|get_item:tenant|get_item:selected_year|get_item:month %}
+                                                <span class="payment-status paid">✓</span>
+                                            {% else %}
+                                                <span class="payment-status unpaid">✗</span>
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                   
-                                   
             </div>
-        </section>
-
- </main>
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+        </div>
+    </section>
+</main>
 {% endblock %}

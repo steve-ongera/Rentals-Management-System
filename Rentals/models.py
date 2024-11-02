@@ -114,6 +114,8 @@ class tenants_database(models.Model):
     identification_number = models.CharField(max_length=20, unique=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
+    gender = models.CharField(max_length=100,default='N/A', blank=True, null=True)
+    dob = models.DateField(blank=True, null=True)
     email = models.EmailField()
     phone = models.CharField(max_length=20)
     address = models.CharField(max_length=20)
@@ -144,12 +146,35 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     mpesa_code=models.CharField(max_length=100)
     date_paid = models.DateField()
-
+    year = models.ForeignKey(Payment_Year, on_delete=models.CASCADE )
+    
     class Meta:
-        unique_together = ('tenant', 'month')
+        unique_together = ('tenant', 'month', 'year')
+        ordering = ['year', 'month', 'tenant']  # Optional: adds default ordering
+        
+    # def clean(self):
+    #     from django.core.exceptions import ValidationError
+    #     # Check if a payment already exists for this tenant-month-year combination
+    #     existing_payment = Payment.objects.filter(
+    #         tenant=self.tenant,
+    #         month=self.month,
+    #         year=self.year
+    #     ).exclude(pk=self.pk).exists()
+        
+    #     if existing_payment:
+    #         raise ValidationError('A payment already exists for this tenant in the specified month and year.')
+
+    # def save(self, *args, **kwargs):
+    #     self.full_clean()  # This will run the clean method before saving
+    #     super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.tenant} - {self.month} - {self.amount}-{self.date_paid}"
+        return f"{self.tenant} - {self.year} - {self.month} - {self.amount} - {self.date_paid}"
+    
+    # @classmethod
+    # def get_unpaid_months(cls, tenant, payment_year):
+    #     paid_months = cls.objects.filter(tenant=tenant, year=payment_year).values_list('month_id', flat=True)
+    #     return Month.objects.exclude(id__in=paid_months)
     
 
 

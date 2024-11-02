@@ -1,0 +1,63 @@
+
+
+
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="{% static 'assets/css/style2.css' %}" rel="stylesheet">
+
+<style>
+    .confirmation-message {
+        margin-bottom: 20px;
+        font-size: 18px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group button {
+        margin-top: 10px;
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title"></h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Delete Tenant</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title mb-0">Delete ?</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="confirmation-message">
+                            <p>You are about to delete the following Tenant:</p>
+                            <p><strong>{{ tenant.first_name }} {{tenant.last_name}} ? </strong></p>
+                        </div>
+                            
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-danger"> Delete</button>
+                                <a href="{% url 'user_list' %}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

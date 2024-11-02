@@ -71,6 +71,8 @@ from transformers import RagTokenizer, RagRetriever, RagSequenceForGeneration
 from django.db.models import Exists, OuterRef
 from django.db.models import OuterRef, Exists, Subquery
 from django.utils import timezone
+import calendar
+from django.utils.timezone import now
 
 def download_receipt(request, payment_id):
     payment = get_object_or_404(Payment, id=payment_id)
@@ -85,49 +87,52 @@ def is_admin_or_developer(user):
 @login_required
 @user_passes_test(is_admin_or_developer)
 
-
 def admin_dashboard(request):
     # Count number of tenants
     num_workers = Worker.objects.count()
     num_non_workers = NonStaff.objects.count()
-
     num_tenants = Tenant.objects.count()
 
-    # Query to get payments aggregated by month
-    payments_by_month = Payment.objects.values('month__name').annotate(total_payments=Count('id'), total_amount=Sum('amount'))
+    # Retrieve all distinct years from the Payment_Year model
+    years = Payment_Year.objects.all()
 
-    # Convert queryset to a dictionary with month names as keys
-    payments_dict = {item['month__name']: item for item in payments_by_month}
+    # Dictionary to store payment data for each year
+    payments_by_year = {}
 
-    # Get the list of months in the correct order
-    months = list(calendar.month_name)[1:]  # Exclude the empty first element
+    # Loop through each year and get payment data for that year
+    for year in years:
+        payments_by_month = Payment.objects.filter(year=year).values('month__name').annotate(total_payments=Count('id'), total_amount=Sum('amount'))
+        payments_dict = {item['month__name']: item for item in payments_by_month}
 
-    # Prepare data for chart (labels and data)
-    labels = []
-    total_payments_data = []
-    total_amount_data = []
+        # Prepare data for chart (labels and data)
+        labels = list(calendar.month_name)[1:]  # Exclude the empty first element
+        total_payments_data = []
+        total_amount_data = []
 
-    for month in months:
-        labels.append(month)
-        if month in payments_dict:
-            total_payments_data.append(payments_dict[month]['total_payments'])
-            # Convert Decimal to float for JavaScript compatibility
-            total_amount_data.append(float(payments_dict[month]['total_amount']))
-        else:
-            total_payments_data.append(0)
-            total_amount_data.append(0.0)
+        for month in labels:
+            if month in payments_dict:
+                total_payments_data.append(payments_dict[month]['total_payments'])
+                total_amount_data.append(float(payments_dict[month]['total_amount']))
+            else:
+                total_payments_data.append(0)
+                total_amount_data.append(0.0)
+
+        payments_by_year[year.name] = {
+            'labels': labels,
+            'total_payments_data': total_payments_data,
+            'total_amount_data': total_amount_data,
+        }
 
     # Calculate total sum of all payments
     total_sum = Payment.objects.aggregate(total_sum=Sum('amount'))['total_sum'] or 0.0
 
     context = {
         'num_tenants': num_tenants,
-        'labels': labels,
-        'total_payments_data': total_payments_data,
-        'total_amount_data': total_amount_data,
+        'payments_by_year': payments_by_year,
         'total_sum': float(total_sum),  # Convert to float for consistency
         'num_workers': num_workers,  # Add number of workers to context
         'num_non_workers': num_non_workers,  # Add number of workers to context
+        'years': years  # Add the distinct years to context
     }
     return render(request, 'admin_dashboard.html', context)
 
@@ -242,27 +247,81 @@ def is_admin_or_developer(user):
 @user_passes_test(is_admin_or_developer)
 
 
-
 def tenant_payment_status(request):
     tenants = Tenant.objects.all()
     months = Month.objects.all().order_by('start_date')
+    payment_years = Payment_Year.objects.all().order_by('-name')
+    
+    # Get the selected year (default to the latest year if none selected)
+    selected_year_id = request.GET.get('year')
+    if selected_year_id:
+        selected_year = Payment_Year.objects.get(id=selected_year_id)
+    else:
+        selected_year = payment_years.first()
     
     payment_data = {}
+    year_totals = {}
+    
     for tenant in tenants:
         payment_data[tenant] = {}
-        for month in months:
-            # Adjust this logic based on how you're tracking payments
-            payment = Payment.objects.filter(tenant=tenant, month=month).exists()
-            payment_data[tenant][month] = payment
+        
+        # Initialize data for each year
+        for year in payment_years:
+            # Get all payments for this tenant and year in one query
+            tenant_year_payments = Payment.objects.filter(
+                tenant=tenant,
+                year=year
+            ).select_related('month')  # Optimize by pre-fetching month relationships
+            
+            # Convert to a set of month IDs for efficient lookup
+            paid_month_ids = set(payment.month.id for payment in tenant_year_payments)
+            
+            payment_data[tenant][year] = {}
+            rent_fee = tenant.house.rent_fee if tenant.house else 0
+            
+            # Initialize year totals if not already done
+            if year not in year_totals:
+                year_totals[year] = {
+                    'total_paid': 0,
+                    'total_expected': len(months) * rent_fee,
+                    'total_tenants': len(tenants)
+                }
+            
+            # Process each month
+            for month in months:
+                # Check if payment exists using the pre-fetched set
+                payment_exists = month.id in paid_month_ids
+                payment_data[tenant][year][month] = payment_exists
+                
+                if payment_exists:
+                    year_totals[year]['total_paid'] += rent_fee
+
+    # Calculate additional statistics
+    for year in year_totals:
+        year_totals[year]['payment_percentage'] = (
+            (year_totals[year]['total_paid'] / year_totals[year]['total_expected'] * 100)
+            if year_totals[year]['total_expected'] > 0 else 0
+        )
+        
+    # Add debug information
+    debug_info = {
+        'years_found': [year.name for year in payment_years],
+        'payment_counts': {
+            year.name: Payment.objects.filter(year=year).count()
+            for year in payment_years
+        }
+    }
 
     context = {
         'tenants': tenants,
         'months': months,
+        'payment_years': payment_years,
+        'selected_year': selected_year,
         'payment_data': payment_data,
+        'year_totals': year_totals,
+        'debug_info': debug_info,  # Include debug information in context
     }
     return render(request, 'payment_record.html', context)
-
-
 
 
 @login_required
@@ -455,7 +514,7 @@ def add_tenant(request):
     return render(request, 'add_tenant.html', { 'form':form})
 
 
-
+#####Tenants User Database
 
 @login_required
 @user_passes_test(is_admin_or_developer)
@@ -470,6 +529,35 @@ def add_tenant_databse(request):
     else:
         form= tenants_databaseForm()
     return render(request, 'add_tenant_databse.html', { 'form':form})
+
+def tenant_database_details(request, tenant_id):
+    tenant = get_object_or_404(tenants_database, id=tenant_id)
+    context = {
+        'tenant': tenant,
+    }
+    return render(request, 'tenant_details.html', context)
+
+def update_tenant_database(request, tenant_id):
+    tenant = get_object_or_404(tenants_database, id=tenant_id)
+    if request.method == 'POST':
+        form = tenants_databaseForm(request.POST, instance=tenant)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'User Information successfully updated.')
+            return redirect('user_list')  # Adjust the URL name as needed
+    else:
+        form = tenants_databaseForm(instance=tenant)
+    return render(request, 'update_tenant_database.html', {'form': form, 'tenant': tenant})
+
+
+def delete_tenant_database(request, tenant_id):
+    tenant = get_object_or_404(tenants_database, id=tenant_id)
+    if request.method == 'POST':
+        tenant.delete()
+        messages.success(request, 'User Information successfully deleted.')
+        return redirect('user_list')  # Adjust the URL name as needed
+    return render(request, 'delete_tenant_database.html', {'tenant': tenant})
+
 
 
 
@@ -748,7 +836,7 @@ def tenant_payment(request):
         tenant = Tenant.objects.get(user_name=request.user.username)
     except Tenant.DoesNotExist:
         messages.error(request, "Tenant profile not found.")
-        return redirect('some_error_page')  # Replace with appropriate error page
+        return redirect('home')  # Replace with appropriate error page
 
     if request.method == 'POST':
         form = UserPaymentForm(request.POST)

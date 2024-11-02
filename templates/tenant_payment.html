@@ -92,6 +92,8 @@
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-xl-6">
+
+                                    
                                     <div class="form-group row">
                                         <label for="month" class="col-lg-3 col-form-label">Month</label>
                                         <div class="col-lg-9">
@@ -117,6 +119,13 @@
                                         <label for="mpesa_code" class="col-lg-3 col-form-label">Mpesa Code</label>
                                         <div class="col-lg-9">
                                             {{ form.mpesa_code }}
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="form-group row">
+                                        <label for="year" class="col-lg-3 col-form-label">Year</label>
+                                        <div class="col-lg-9">
+                                            {{ form.year }}
                                         </div>
                                     </div>
                                     <br>

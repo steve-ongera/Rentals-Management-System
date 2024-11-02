@@ -60,7 +60,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="col-auto float-right ml-auto">
-                            <a href="{% url 'payment_status'%}" class="btn add-btn" data-toggle="modal"  ><i class="fa fa-arrow-left"></i> Back</a>
+                            <a href="{% url 'payment_status'%}" class="btn add-btn"   ><i class="fa fa-arrow-left"></i> Back</a>
                           
                         </div>
 
@@ -114,6 +114,17 @@
                                             <div class="col-lg-9">
                                                 <input type="text" id="mpesa_code" name="mpesa_code" maxlength="10" class="form-control" required>
                                                
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <br>
+
+                                        <label for="year" class="col-lg-3 col-form-label">Year</label>
+                                        <div class="col-lg-9">                                           
+
+                                                    {{ form.year }}
+                                                
                                             </div>
                                         </div>
                                         <br>
